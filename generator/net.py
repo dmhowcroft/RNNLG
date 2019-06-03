@@ -10,7 +10,7 @@ import pickle as pk
 import time
 from math import log10
 
-from loader.data_reader import *
+import loader.data_reader
 from loader.generation_scorer import *
 from nn.nn_generator import *
 
@@ -118,7 +118,7 @@ class Model(object):
         self.dh = parser.getint('generator', 'hidden')
         # set random seed
         np.random.seed(self.seed)
-        random.seed(self.seed)
+        loader.data_reader.random.seed(self.seed)
         np.set_printoptions(precision=4)
         # setting data reader, processors, and lexicon
         self.setup_delegates()
@@ -182,7 +182,7 @@ class Model(object):
                 if data == None:
                     break
                 # set regularization , once per ten times
-                reg = 0 if random.randint(0, 9) == 5 else self.beta
+                reg = 0 if loader.data_reader.random.randint(0, 9) == 5 else self.beta
                 # unfold data point
                 a, sv, s, v, words, _, _, cutoff_b, cutoff_f = data
                 # train net using current example 
@@ -194,13 +194,13 @@ class Model(object):
                 # log message 
                 if self.debug and num_sent % 100 == 0:
                     print('Finishing %8d sent in epoch %3d\r' % (num_sent, epoch), end="")
-                    sys.stdout.flush()
+                    loader.data_reader.sys.stdout.flush()
             # log message
             sec = (time.time() - tic) / 60.0
             if self.debug:
                 print('Epoch %3d, Alpha %.6f, TRAIN entropy:%.2f, Time:%.2f mins,' % \
                       (epoch, self.lr, -train_logp / log10(2) / wcn, sec), end="")
-                sys.stdout.flush()
+                loader.data_reader.sys.stdout.flush()
 
             # validation phase
             self.valid_logp, wcn = 0.0, 0.0
@@ -308,7 +308,7 @@ class Model(object):
                 wordids = np.swapaxes(np.array(wordids), 0, 1)
 
                 # DT training
-                reg = 0 if random.randint(0, 9) == 5 else self.beta
+                reg = 0 if loader.data_reader.random.randint(0, 9) == 5 else self.beta
                 xObj, xBLEU, xERR, senp = self.model.trainObj(
                     [a] * self.batch, [sv] * self.batch,
                     [s] * self.batch, [v] * self.batch,
@@ -325,14 +325,14 @@ class Model(object):
                 if self.debug and num_sent % 1 == 0:
                     print('Finishing %8d sent in epoch %3d\r' % \
                           (num_sent, epoch), end="")
-                    sys.stdout.flush()
+                    loader.data_reader.sys.stdout.flush()
             sec = (time.time() - tic) / 60.0
             if self.debug:
                 print(
                     'Epoch %2d, Alpha %.4f, TRAIN Obj:%.4f, Expected BLEU:%.4f, Expected ERR:%.4f, Time:%.2f mins,' % (
                     epoch, self.lr, train_obj / float(num_sent), train_bleu / float(num_sent),
                     train_err / float(num_sent), sec), end="")
-                sys.stdout.flush()
+                loader.data_reader.sys.stdout.flush()
 
             # validation phase
             self.valid_obj = 0.0
@@ -379,7 +379,7 @@ class Model(object):
                 wordids = np.swapaxes(np.array(wordids), 0, 1)
 
                 # DT validation
-                reg = 0 if random.randint(0, 9) == 5 else self.beta
+                reg = 0 if loader.data_reader.random.randint(0, 9) == 5 else self.beta
                 xObj, xBLEU, xERR = self.model.testObj(
                     [a] * self.batch, [sv] * self.batch,
                     [s] * self.batch, [v] * self.batch,
@@ -581,8 +581,8 @@ class Model(object):
 
     def setup_delegates(self):
         # initialise data reader
-        self.reader = DataReader(self.seed, self.domain, self.obj,
-                                 self.vocabfile, self.trainfile, self.validfile, self.testfile,
-                                 self.percentage, self.verbose, lex_cutoff=4)
+        self.reader = loader.data_reader.DataReader(self.seed, self.domain, self.obj,
+                                                    self.vocabfile, self.trainfile, self.validfile, self.testfile,
+                                                    self.percentage, self.verbose, lex_cutoff=4)
         # setting generation scorer
         self.gentscorer = GenerationScorer(self.detectpairs)
