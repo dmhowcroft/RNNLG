@@ -1,17 +1,38 @@
-# RNNLG
+# RNNLG for Python 3
 
-RNNLG is an open source benchmark toolkit for **Natural Language Generation** (NLG) in spoken dialogue system application domains. It is released by **Tsung-Hsien (Shawn) Wen** from **Cambridge Dialogue Systems Group** under **Apache License 2.0**. 
+This fork of RNNLG adds Python3 compatibility and various bits of formatting and documentation updated.
 
-**UPDATE: If you are interested in learning the techniques behind this toolkit, I recently had a tutorial at INLG conference. The link of the slides is here: http://mi.eng.cam.ac.uk/~thw28/talks/DL4NLG_20160906.pdf.
+The [original RNNLG](https://github.com/shawnwun/RNNLG) is an open source benchmark toolkit for **Natural Language Generation** (NLG) in spoken dialogue system application domains. It is released by **Tsung-Hsien (Shawn) Wen** from **Cambridge Dialogue Systems Group** under **Apache License 2.0**. 
 
-# Requirement
-You need to have the following package to run the program:
+Naturally, this version with updates from David M. Howcroft, are released under the Apache License 2.0 as well.
+
+If you want an overview of the methods used in this codebase, check out [Shawn's tutorial from INLG 2016 (PDF)](http://mi.eng.cam.ac.uk/~thw28/talks/DL4NLG_20160906.pdf).
+
+## Requirements
+
+This repo requires:
 ```
 * Theano 0.8.2 and accompanying packages such as numpy, scipy ...
 * NLTK 3.0.0
 ```
 
-# Benchmark Datasets 
+The Pipfile included in this repo lists additional packages which I am using in my development environment.
+If you are using [Pipenv](https://docs.pipenv.org/en/latest/) and use this list of dependencies, you may want to check if everything listed is necessary for your setup.
+ 
+
+## Benchmark Datasets 
+
+### Data Format
+
+Each example in the file is represented as a 3-element list:
+```
+* [MR/Dialogue Act, Human Authored Response, HDC baseline]
+```
+For more detail of how the datasets were collected, please refer to 
+**Wen et al, 2015b** and **Wen et al, 2016**.
+
+### From Shawn's original release
+
 The toolkit encloses the following four benchmark datasets:
 ```
 * data/original/restaurant/ : San Francisco restaurant search
@@ -38,20 +59,20 @@ as well as some union of domains:
 * data/union/r+h+l+t/
 ```
 
-Each example in the file is represented as a 3-element list:
-```
-* [MR/Dialogue Act, Human Authored Response, HDC baseline]
-```
-For more detail of how the datasets were collected, please refer to 
-**Wen et al, 2015b** and **Wen et al, 2016**.
+### Later additions
+
+I am working on using RNNLG with the [E2E Challenge](http://www.macs.hw.ac.uk/InteractionLab/E2E/) dataset, so you may see files related to this added to the repo.
 
 
-# Toolkit Overview 
+## About the System 
 
 The toolkit is implmented in **Python**. The training of the neural networks 
 is implemented in **Theano** library, while the decoding is implemented in 
-**Numpy** for runtime efficiency. The toolkit supports several RNN-based 
-generators as well as several baselines:
+**Numpy** for runtime efficiency. 
+
+Note that, since 2017, **Theano is no longer developed or maintained**, so you may want to reimplement these models in a different NN framework.
+
+The toolkit supports several RNN-based generators as well as several baselines:
 
 ```
 * Model
@@ -75,7 +96,7 @@ generators as well as several baselines:
 - (sample) Random sampling
 ```
 
-# Configuration Parameters 
+### Configuration Parameters 
 
 Below are configuration parameters explained by sections:
 
@@ -124,7 +145,7 @@ Below are knn/ngram specific parameters:
 - rho           : number of slots considered to partition the dataset
 ```
 
-# Quick Start 
+## Quick Start 
 
 To run ML training:
 ```
@@ -149,7 +170,7 @@ python main.py -config config/sclstm-DT.cfg -mode adapt
 
 Note : before you run anything, make sure the config vars are properly set.
 
-# Benchmark Results
+## Benchmark Results
 
 The following benchmark results were produced by training each neural network model on 5 different random seeds (1-5) and selected models with the best validation BLEU score. Both the testing and validating set performance are shown:
 
@@ -157,13 +178,13 @@ The following benchmark results were produced by training each neural network mo
 <img src="https://raw.githubusercontent.com/shawnwun/RNNLG/master/benchmark.png" alt="benchmark" width="600" height="600"/>
 
 
-# Bug Report
+## Bug Report
 
-If you have found any bugs in the code, please contact: thw28 at cam dot ac dot uk
+The original repo suggested contacting Shawn directly at his Cambridge email address with bug reports, but for this fork I am happy to accept issues and pull requests on GitHub.
 
-# References 
-If you use any source codes or datasets included in this toolkit in your
-work, please cite the corresponding papers. The bibtex are listed below:
+## References
+
+This work was the byproduct of academic research. Depending on which models you use, you should cite or link to the following publications when using one of the models.
 
     [Wen et al, 2016]:
         @inproceedings{wenmultinlg16,
@@ -209,3 +230,4 @@ work, please cite the corresponding papers. The bibtex are listed below:
         location={Montreal, Canada}
     }
 
+Of course, if you use this codebase for your own system rather than the original repo, it makes sense to link to this repository in your papers or websites.
