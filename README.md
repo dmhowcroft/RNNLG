@@ -10,13 +10,15 @@ If you want an overview of the methods used in this codebase, check out [Shawn's
 
 ## Requirements
 
-This repo requires:
+The original repo requires:
 ```
 * Theano 0.8.2 and accompanying packages such as numpy, scipy ...
 * NLTK 3.0.0
 ```
 
-The Pipfile included in this repo lists additional packages which I am using in my development environment.
+Note, however, that **I use Theano 1.0 (and pygpu 0.7.6)** for my own development, as noted in the Pipfile.
+
+The Pipfile included in this repo also lists further packages which I am using in my development environment.
 If you are using [Pipenv](https://docs.pipenv.org/en/latest/) and use this list of dependencies, you may want to check if everything listed is necessary for your setup.
  
 
