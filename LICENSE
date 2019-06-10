@@ -2,6 +2,9 @@
 # CUED Recurrent Neural Language Generation Benchmark Software
 ##############################################################
 #
+# New additions:
+# Copyright 2016-2019 David M. Howcroft (https://www.davehowcroft.com)
+# Mostly:
 # Copyright 2016 Cambridge University Engineering Department 
 # Dialogue Systems Group
 # Copyright 2016 Tsung-Hsien Wen <thw28@cam.ac.uk>
