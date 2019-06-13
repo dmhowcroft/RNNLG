@@ -162,9 +162,8 @@ class DataReader(object):
         return self.formatter.format(dact)
 
     def _set_cardinality(self):
-
         self.cardinality = []
-        fin = file('resource/feat_template.txt')
+        fin = open('resource/feat_template.e2e.txt')
         self.dfs = [0, 0, 0, 0, 0]
         for line in fin.readlines():
             self.cardinality.append(line.replace('\n', ''))
