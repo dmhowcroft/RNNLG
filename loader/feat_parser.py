@@ -88,7 +88,7 @@ class SoftDActFormatter(DActFormatter):
         feature = []
         for sv in jsact['s2v']:
             s, v = sv
-            if s == None:  # no slot no value
+            if s is None:  # no slot no value
                 continue  # skip it
             elif v == '?':  # question case
                 feature.append((s, v))
@@ -96,7 +96,7 @@ class SoftDActFormatter(DActFormatter):
                 if s in mem:  # multiple feature values
                     feature.append((s, v + str(mem[s])))
                     mem[s] += 1
-                else:  # first occurance
+                else:  # first occurrence
                     feature.append((s, v + '1'))
                     mem[s] = 2
             elif v in self.special_values:  # special values
@@ -131,7 +131,7 @@ class HardDActFormatter(DActFormatter):
             feature = []
             for sv in jsact['s2v']:
                 s, v = sv
-                if s == None:  # no slot no value
+                if s is None:  # no slot no value
                     feature.append('SV-NoSlot=NoValue')
                 elif v == '?':  # question case
                     feature.append('SV-' + s + '=PENDING')

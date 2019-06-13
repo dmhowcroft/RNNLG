@@ -3,21 +3,17 @@
 #  Copyright Tsung-Hsien Wen, Cambridge Dialogue Systems Group, 2016 #
 ######################################################################
 ######################################################################
-try:
-    from builtins import input as raw_input
-except ImportError:
-    # Python2 has no 'builtins' module, but raw_input is already available there
-    pass
+from builtins import input as raw_input
+
+from typing import List
+
 
 import numpy as np
 import random
-import re
 
 from .feat_parser import *
 from .data_lexicaliser import *
 from utils.nlp import *
-
-file = open
 
 
 class DataReader(object):
@@ -78,7 +74,8 @@ class DataReader(object):
             data = None
             self.index = 0
             # shuffle data except for testing 
-            if mode != 'test': random.shuffle(self.data[mode])
+            if mode != 'test':
+                random.shuffle(self.data[mode])
             return data
 
         # reading a batch
@@ -96,9 +93,9 @@ class DataReader(object):
             a, sv, s, v = self.gen_feat_vec(feat, self.cardinality, self.dfs)
             # testing case, 
             if mode == 'test':
-                sent = [self.lexicalise(sent[i], dact) \
+                sent = [self.lexicalise(sent[i], dact)
                         for i in range(len(sent))]
-                base = [self.lexicalise(base[i], dact) \
+                base = [self.lexicalise(base[i], dact)
                         for i in range(len(base))]
                 # put in container
                 xvec = [a, sv, s, v, sent, dact, base]
@@ -201,14 +198,12 @@ class DataReader(object):
         self.data['valid'] = self._load_data(validfile, train_group)
         self.data['test'] = self._load_data(testfile, False, True)
         # cut train/valid data by proportion
-        self.data['train'] = self.data['train'] \
-            [:int(self.percentage * len(self.data['train']))]
-        self.data['valid'] = self.data['valid'] \
-            [:int(self.percentage * len(self.data['valid']))]
+        self.data['train'] = self.data['train'][:int(self.percentage * len(self.data['train']))]
+        self.data['valid'] = self.data['valid'][:int(self.percentage * len(self.data['valid']))]
 
-    def _load_data(self, filename, group=True, multiref=False):
+    def _load_data(self, filename, group=True, multiref=False) -> List:
 
-        fin = file(filename)
+        fin = open(filename)
         # remove comment lines
         for i in range(5):
             fin.readline()
@@ -218,10 +213,8 @@ class DataReader(object):
         container = []
         for dact, sent, base in data:
             # word tokens
-            sent = self.delexicalise(
-                normalize(re.sub(' [\.\?\!]$', '', sent)), dact)
-            base = self.delexicalise(
-                normalize(re.sub(' [\.\?\!]$', '', base)), dact)
+            sent = self.delexicalise(normalize(re.sub(' [.?!]$', '', sent)), dact)
+            base = self.delexicalise(normalize(re.sub(' [.?!]$', '', base)), dact)
             feat = self.formatter.format(dact)
             container.append([feat, dact, sent, base])
 
@@ -258,14 +251,14 @@ class DataReader(object):
 
     def _load_vocab(self, vocabfile):
 
-        fin = file(vocabfile)
+        fin = open(vocabfile)
         self.vocab = []  # ['<unk>','</s>']
         for wrd in fin.readlines():
             wrd = wrd.replace('\n', '')
             self.vocab.append(wrd)
 
     def _load_token_map(self, mapfile='resource/detect.pair'):
-        fin = file(mapfile)
+        fin = open(mapfile)
         self.tokenMap = json.load(fin)['general'].items()
         fin.close()
         # make it 1-to-1 relation
@@ -291,7 +284,7 @@ class DataReader(object):
         return index_map
 
     def read_vec_file(self, filename, vocab):
-        fin = file(filename)
+        fin = open(filename)
         # discard comment lines
         for i in range(5):
             fin.readline()

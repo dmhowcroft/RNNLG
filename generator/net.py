@@ -4,6 +4,10 @@
 ######################################################################
 ######################################################################
 from __future__ import print_function
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import argparse
 
 import os
 import pickle as pk
@@ -15,10 +19,8 @@ from loader.generation_scorer import *
 from nn.nn_generator import *
 
 try:
-
     from ConfigParser import SafeConfigParser
 except ImportError:
-
     from configparser import SafeConfigParser
 
 # theano debugging flags
@@ -50,35 +52,36 @@ class Model(object):
     #################################################################
     ################### Initialisation ##############################
     #################################################################
-    def __init__(self, config=None, opts=None):
+    def __init__(self, config: Optional[str] = None, opts: Optional["argparse.Namespace"] = None) -> None:
         # not enough info to execute
-        if config == None and opts == None:
+        if config is None and opts is None:
             print("Please specify command option or config file ...")
             return
+
         # config parser
         parser = SafeConfigParser()
         parser.read(config)
+
         # loading pretrained model if any
         self.modelfile = parser.get('data', 'model')
-        if opts:    self.mode = opts.mode
-        # check model file exists or not 
+        if opts:
+            self.mode = opts.mode
+
+        # check model file exists or not
         if os.path.isfile(self.modelfile):
             if not opts:
                 self.load_net(parser, None)
             else:
                 self.load_net(parser, opts.mode)
+
         # Otherwise, initialize a new model
         else:
-            self.init_net(config, opts)
+            self.init_net(parser, opts)
             self.update_numpy_params()
 
-    def init_net(self, config, opts=None):
+    def init_net(self, parser, opts=None):
 
-        print('\n\ninit net from scrach ... ')
-
-        # config parser
-        parser = SafeConfigParser()
-        parser.read(config)
+        print('\n\ninit net from scratch ... ')
 
         # setting learning hyperparameters 
         self.debug = parser.getboolean('learn', 'debug')
@@ -148,8 +151,7 @@ class Model(object):
                                  self.reader.token_map_to_indices())
         # setting word vectors
         if self.wvecfile != 'None':
-            self.model.set_word_vec(self.reader.read_vec_file(
-                self.wvecfile, self.reader.vocab))
+            self.model.setWordVec(self.reader.read_vec_file(self.wvecfile, self.reader.vocab))
         if self.debug:
             print('\t\tnumber of parameters : %8d' % self.model.num_params())
             print('\tthis may take up to several minutes ...')
@@ -179,15 +181,17 @@ class Model(object):
             while True:
                 # read data point
                 data = self.reader.read(mode='train', batch=self.batch)
-                if data == None:
+                if data is None:
                     break
                 # set regularization , once per ten times
                 reg = 0 if loader.data_reader.random.randint(0, 9) == 5 else self.beta
                 # unfold data point
+                # print(data)
                 a, sv, s, v, words, _, _, cutoff_b, cutoff_f = data
-                # train net using current example 
-                train_logp += self.model.train(a, sv, s, v, words,
-                                               cutoff_f, cutoff_b, self.lr, reg)
+                # train net using current example
+                curr_logp = self.model.train(a, sv, s, v, words, cutoff_f, cutoff_b, self.lr, reg)
+                # print(curr_logp)
+                train_logp += curr_logp
                 # count words and sents 
                 wcn += np.sum(cutoff_f - 1)
                 num_sent += cutoff_b
@@ -207,7 +211,7 @@ class Model(object):
             while True:
                 # read data point
                 data = self.reader.read(mode='valid', batch=self.batch)
-                if data == None:
+                if data is None:
                     break
                 # unfold data point
                 a, sv, s, v, words, _, _, cutoff_b, cutoff_f = data
@@ -521,7 +525,7 @@ class Model(object):
         }
         pk.dump(bundle, open(self.modelfile, 'wb'))
 
-    def load_net(self, parser, mode):
+    def load_net(self, parser, mode: Optional[str]):
 
         print('\n\nloading net from file %s ... ' % self.modelfile)
         bundle = pk.load(open(self.modelfile, 'rb'))

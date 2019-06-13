@@ -47,7 +47,6 @@ class NNGenerator(object):
     def config_theano(self):
         # input tensor variables
         w_idxes = T.imatrix('w_idxes')
-        w_idxes = T.imatrix('w_idxes')
         a = T.imatrix('a')
         sv = T.imatrix('sv')
         s = T.imatrix('s')
@@ -63,31 +62,26 @@ class NNGenerator(object):
 
         # unroll generator and produce cost
         if self.gentype == 'sclstm':
-            self.cost, cutoff_logp = \
-                self.generator.unroll(a, sv, w_idxes, cutoff_f, cutoff_b)
+            self.cost, cutoff_logp = self.generator.unroll(a, sv, w_idxes, cutoff_f, cutoff_b)
         elif self.gentype == 'encdec':
-            self.cost, cutoff_logp = \
-                self.generator.unroll(a, s, v, w_idxes, cutoff_f, cutoff_b)
+            self.cost, cutoff_logp = self.generator.unroll(a, s, v, w_idxes, cutoff_f, cutoff_b)
         elif self.gentype == 'hlstm':
-            self.cost, cutoff_logp = \
-                self.generator.unroll(a, sv, w_idxes, cutoff_f, cutoff_b)
+            self.cost, cutoff_logp = self.generator.unroll(a, sv, w_idxes, cutoff_f, cutoff_b)
 
         ###################### ML Training #####################
         # gradients and updates
         gradients = T.grad(clip_gradient(self.cost, 1), self.params)
-        updates = OrderedDict((p, p - lr * g + reg * p) \
+        updates = OrderedDict((p, p - lr * g + reg * p)
                               for p, g in zip(self.params, gradients))
 
         # theano functions
-        self.train = theano.function(
-            inputs=[a, sv, s, v, w_idxes, cutoff_f, cutoff_b, lr, reg],
-            outputs=-self.cost,
-            updates=updates,
-            on_unused_input='ignore')
-        self.test = theano.function(
-            inputs=[a, sv, s, v, w_idxes, cutoff_f, cutoff_b],
-            outputs=-self.cost,
-            on_unused_input='ignore')
+        self.train = theano.function(inputs=[a, sv, s, v, w_idxes, cutoff_f, cutoff_b, lr, reg],
+                                     outputs=-self.cost,
+                                     updates=updates,
+                                     on_unused_input='ignore')
+        self.test = theano.function(inputs=[a, sv, s, v, w_idxes, cutoff_f, cutoff_b],
+                                    outputs=-self.cost,
+                                    on_unused_input='ignore')
 
         ###################### DT Training #####################
         # expected objective
@@ -135,8 +129,8 @@ class NNGenerator(object):
             elif self.gentype == 'hlstm':
                 return self.generator.sample(a, sv)
 
-    def set_word_vec(self, word2vec):
-        self.generator.setWordVec(word2vec)
+    def setWordVec(self, word2vec):
+        self.generator.set_word_vec(word2vec)
 
     def set_params(self, params):
         for i in range(len(self.params)):
