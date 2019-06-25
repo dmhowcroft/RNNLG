@@ -71,7 +71,7 @@ class encdec(BaseRLG):
             self.Wgate,
             self.Who]
 
-    def setWordVec(self, word2vec):
+    def set_word_vec(self, word2vec):
         self.Wemb_np = self.Wemb.get_value()
         for w, v in iteritems(word2vec):
             self.Wemb_np[w, :] = v

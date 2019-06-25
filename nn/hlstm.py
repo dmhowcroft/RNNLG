@@ -199,7 +199,7 @@ class hlstm(BaseRLG):
         utts = []
         for score, n in sorted(endnodes, key=operator.itemgetter(0)):
             utt = [n.wordid]
-            while n.prevNode is note None:
+            while n.prevNode is not None:
                 # back trace
                 n = n.prevNode
                 utt.append(n.wordid)

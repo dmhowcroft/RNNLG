@@ -129,7 +129,7 @@ class NNGenerator(object):
             elif self.gentype == 'hlstm':
                 return self.generator.sample(a, sv)
 
-    def setWordVec(self, word2vec):
+    def set_word_vec(self, word2vec):
         self.generator.set_word_vec(word2vec)
 
     def set_params(self, params):

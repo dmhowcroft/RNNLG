@@ -151,7 +151,7 @@ class Model(object):
                                  self.reader.token_map_to_indices())
         # setting word vectors
         if self.wvecfile != 'None':
-            self.model.setWordVec(self.reader.read_vec_file(self.wvecfile, self.reader.vocab))
+            self.model.set_word_vec(self.reader.read_vec_file(self.wvecfile, self.reader.vocab))
         if self.debug:
             print('\t\tnumber of parameters : %8d' % self.model.num_params())
             print('\tthis may take up to several minutes ...')
@@ -173,6 +173,7 @@ class Model(object):
         lr_divide = 0
         llr_divide = -1
 
+        # prev_val = self.model.params[0].get_value()
         while True:
             # training phase
             epoch += 1
@@ -190,6 +191,10 @@ class Model(object):
                 a, sv, s, v, words, _, _, cutoff_b, cutoff_f = data
                 # train net using current example
                 curr_logp = self.model.train(a, sv, s, v, words, cutoff_f, cutoff_b, self.lr, reg)
+                # curr_val = self.model.params[0].get_value()
+                # changes = [i for i in range(len(curr_val)) if not np.allclose(curr_val[i], prev_val[i], 0.001, 0.001, True)]
+                # print(changes)
+                # prev_val = curr_val
                 # print(curr_logp)
                 train_logp += curr_logp
                 # count words and sents 
@@ -433,7 +438,7 @@ class Model(object):
         while True:
             # read data point
             data = self.reader.read(mode='test', batch=1)
-            if data == None:
+            if data is None:
                 break
             a, sv, s, v, sents, dact, bases, cutoff_b, cutoff_f = data
             # remove batch dimension
@@ -442,7 +447,7 @@ class Model(object):
             # generate sentences
             gens = self.model.gen(a, sv, s, v)
             # for slot error rate scoring
-            felements = [self.reader.cardinality[x + self.reader.dfs[1]] \
+            felements = [self.reader.cardinality[x + self.reader.dfs[1]]
                          for x in sv]
 
             # post processing
