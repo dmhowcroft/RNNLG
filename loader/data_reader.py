@@ -30,6 +30,7 @@ class DataReader(object):
 
         # load vocab from file
         self._load_vocab(vocab_file)
+        self._detect_pairs_file = detect_pairs_file
         self._load_token_map()
 
         ## set input feature cardinality
@@ -49,8 +50,6 @@ class DataReader(object):
 
         # obtain pos tags
         # self.obtainTags()
-
-        self._detect_pairs_file = detect_pairs_file
 
         if verbose:
             self._print_stats()
