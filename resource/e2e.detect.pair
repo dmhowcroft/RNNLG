@@ -2,7 +2,10 @@
     "general" : {
         "address"    : "SLOT_ADDRESS",
         "area"       : "SLOT_AREA",
+        "customerrating": "SLOT_CUSTOMERRATING",
         "count"      : "SLOT_COUNT",
+        "eattype"    : "SLOT_EATTYPE",
+        "familyfriendly": "SLOT_FAMILYFRIENDLY",
         "food"       : "SLOT_FOOD",
         "goodformeal": "SLOT_GOODFORMEAL",
         "name"       : "SLOT_NAME",
@@ -37,6 +40,7 @@
     "binary"  : {
         "kidsallowed":["child","kid","kids","children"],
         "dogsallowed":["dog","dogs","puppy"],
+        "familyfriendly":["family", "friendly", "children", "kids"],
         "hasinternet":["internet","wifi"],
         "acceptscreditcards":["card","cards"],
         "isforbusinesscomputing":["business","nonbusiness","home","personal","general"],
