@@ -35,7 +35,7 @@ class encdec(BaseRLG):
     def _init_params(self):
 
         # word embedding weight matrix
-        self.Wemb = theano.shared(0.3 * np.random.uniform(-1.0, 1.0, \
+        self.Wemb = theano.shared(0.3 * np.random.uniform(-1.0, 1.0,
                                                           (self.di, self.dh)).astype(theano.config.floatX))
         # DA embedding
         npah = 0.3 * np.random.uniform(-1.0, 1.0, (self.da + 1, self.dh))
@@ -48,15 +48,15 @@ class encdec(BaseRLG):
         self.Wsh = theano.shared(npsh.astype(theano.config.floatX))
         self.Wvh = theano.shared(npvh.astype(theano.config.floatX))
         # attention weights
-        self.Wha = theano.shared(0.3 * np.random.uniform(-1.0, 1.0, \
+        self.Wha = theano.shared(0.3 * np.random.uniform(-1.0, 1.0,
                                                          (self.dh * 3, self.dh)).astype(theano.config.floatX))
-        self.Vha = theano.shared(0.3 * np.random.uniform(-1.0, 1.0, \
-                                                         (self.dh)).astype(theano.config.floatX))
+        self.Vha = theano.shared(0.3 * np.random.uniform(-1.0, 1.0,
+                                                         (self.dh, )).astype(theano.config.floatX))
         # lstm gate weight matrix
-        self.Wgate = theano.shared(0.3 * np.random.uniform(-1.0, 1.0, \
+        self.Wgate = theano.shared(0.3 * np.random.uniform(-1.0, 1.0,
                                                            (self.dh * 3, self.dh * 4)).astype(theano.config.floatX))
         # hidden to output weight matrix
-        self.Who = theano.shared(0.3 * np.random.uniform(-1.0, 1.0, \
+        self.Who = theano.shared(0.3 * np.random.uniform(-1.0, 1.0,
                                                          (self.dh, self.di)).astype(theano.config.floatX))
         # initial memory cell and hidden layer
         self.h0 = theano.shared(np.zeros((self.db, self.dh),

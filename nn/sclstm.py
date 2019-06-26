@@ -65,6 +65,8 @@ class sclstm(BaseRLG):
                        self.Wcx, self.Wfc,
                        self.Who]
 
+        # print(self.params[0].get_value())
+
     def set_word_vec(self, word2vec):
         self.Wemb_np = self.Wemb.get_value()
         for w, v in iteritems(word2vec):

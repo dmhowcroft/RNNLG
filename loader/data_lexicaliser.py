@@ -33,12 +33,14 @@ class ExactMatchDataLexicaliser(DataLexicaliser):
         DataLexicaliser.__init__(self)
         self.type_token = ''
 
-    def delexicalise(self, sent, jssv):
+    def delexicalise(self, sent, slot_value_pairs):
         # no slot values return directly
-        if len(jssv) == 1 and jssv[0][1] == None:
+        if len(slot_value_pairs) == 1 and slot_value_pairs[0][1] is None:
             return sent
-        for slot, value in sorted(jssv, key=lambda x: len(x[-1]), reverse=True):
-            if value in self.special_values: continue  # special values, skip
+        for slot, value in sorted(slot_value_pairs, key=lambda x: len(x[-1]), reverse=True):
+            # skip special values
+            if value in self.special_values:
+                continue
 
             # taking care of all possible permutations of multiple values
             vs = value.replace(' or ', ' and ').split(' and ')
@@ -60,7 +62,7 @@ class ExactMatchDataLexicaliser(DataLexicaliser):
 
     def lexicalise(self, sent, jssv):
         # no slot values return directly
-        if len(jssv) == 1 and jssv[0][1] == None:
+        if len(jssv) == 1 and jssv[0][1] is None:
             return sent
 
         # replace values
