@@ -185,6 +185,6 @@ class Ngram(object):
         # initialise data reader
         self.reader = DataReader(self.seed, self.domain, self.obj,
                                  self.vocabfile, self.trainfile, self.validfile, self.testfile,
-                                 self.percentage, self.verbose, lex_cutoff=4)
+                                 self.percentage, self.verbose, lex_cutoff=4, self.detectpairs)
         # setting generation scorer
         self.gentscorer = GenerationScorer(self.detectpairs)

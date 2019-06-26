@@ -5,7 +5,7 @@
 ######################################################################
 from builtins import input as raw_input
 
-from typing import List
+from typing import List, Optional
 
 
 import numpy as np
@@ -19,7 +19,7 @@ from utils.nlp import *
 class DataReader(object):
     def __init__(self, seed, domain, obj,
                  vocab_file, train_file, valid_file, test_file,
-                 percentage=1.0, verbose=0, lex_cutoff=4):
+                 percentage=1.0, verbose=0, lex_cutoff=4, detect_pairs_file="resource/detect.pair") -> None:
 
         self.percentage = percentage  # percentage of data used
         # container for data
@@ -49,6 +49,8 @@ class DataReader(object):
 
         # obtain pos tags
         # self.obtainTags()
+
+        self._detect_pairs_file = detect_pairs_file
 
         if verbose:
             self._print_stats()
@@ -178,7 +180,6 @@ class DataReader(object):
     def _print_stats(self):
         print('===============')
         print('Data statistics')
-        print('===============')
         print('Train: %d' % len(self.data['train']))
         print('Valid: %d' % len(self.data['valid']))
         print('Test : %d' % len(self.data['test']))
@@ -211,13 +212,17 @@ class DataReader(object):
         fin.close()
 
         container = []
-        for dact, sent, base in data:
-            # word tokens
-            sent = self.delexicalise(normalize(re.sub(' [.?!]$', '', sent)), dact)
-            base = self.delexicalise(normalize(re.sub(' [.?!]$', '', base)), dact)
-            feat = self.formatter.format(dact)
-            container.append([feat, dact, sent, base])
-
+        delexed_data = []
+        with open("{}.normed.delex".format(filename), 'w') as out_file:
+            for dact, sent, base in data:
+                # word tokens
+                sent = self.delexicalise(normalize(re.sub(' [.?!]$', '', sent.replace("£", "$"))), dact)
+                base = self.delexicalise(normalize(re.sub(' [.?!]$', '', base.replace("£", "$"))), dact)
+                feat = self.formatter.format(dact)
+                container.append([feat, dact, sent, base])
+                delexed_data.append([dact, sent, base])
+            json.dump(delexed_data, out_file, ensure_ascii=False, indent=2)
+        # exit()
         # grouping several sentences w/ the same dialogue act
         # for testing set, or DT on train/valid 
         if group or multiref:
@@ -257,7 +262,9 @@ class DataReader(object):
             wrd = wrd.replace('\n', '')
             self.vocab.append(wrd)
 
-    def _load_token_map(self, mapfile='resource/detect.pair'):
+    def _load_token_map(self, mapfile: Optional[str]=None):
+        if mapfile is None:
+            mapfile = self._detect_pairs_file
         fin = open(mapfile)
         self.tokenMap = json.load(fin)['general'].items()
         fin.close()
