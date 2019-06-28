@@ -150,6 +150,7 @@ class DataReader(object):
 
     def delexicalise(self, sent, dact):
         feat = self.formatter.parse(dact, keep_values=True)
+        # print(feat)
         return self.lexicaliser.delexicalise(sent, feat['s2v'])
 
     def lexicalise(self, sent, dact):
@@ -215,11 +216,14 @@ class DataReader(object):
         with open("{}.normed.delex".format(filename), 'w') as out_file:
             for dact, sent, base in data:
                 # word tokens
+                # print(sent)
+                # print(dact)
                 sent = self.delexicalise(normalize(re.sub(' [.?!]$', '', sent.replace("£", "$"))), dact)
                 base = self.delexicalise(normalize(re.sub(' [.?!]$', '', base.replace("£", "$"))), dact)
                 feat = self.formatter.format(dact)
                 container.append([feat, dact, sent, base])
                 delexed_data.append([dact, sent, base])
+                # print("---")
             json.dump(delexed_data, out_file, ensure_ascii=False, indent=2)
         # exit()
         # grouping several sentences w/ the same dialogue act
