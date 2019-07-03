@@ -87,7 +87,7 @@ class Model(object):
         self.debug = parser.getboolean('learn', 'debug')
         if self.debug:
             print('loading settings from config file ...')
-        self.seed = parser.getint('learn', 'random_seed')
+        self.seed = parser.getint('learn', 'random_seed') % 2**32
         self.lr_divide = parser.getint('learn', 'lr_divide')
         self.lr = parser.getfloat('learn', 'lr')
         self.lr_decay = parser.getfloat('learn', 'lr_decay')
