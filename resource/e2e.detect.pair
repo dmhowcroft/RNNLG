@@ -38,9 +38,9 @@
         "screensizerange" : "SLOT_SCREENSIZERANGE"
     },
     "binary"  : {
-        "kidsallowed":["child","kid","kids","children"],
+        "kidsallowed":[],
         "dogsallowed":["dog","dogs","puppy"],
-        "familyfriendly":["family", "friendly", "children", "kids"],
+        "familyfriendly":["family", "friendly", "children", "kids", "adult"],
         "hasinternet":["internet","wifi"],
         "acceptscreditcards":["card","cards"],
         "isforbusinesscomputing":["business","nonbusiness","home","personal","general"],
