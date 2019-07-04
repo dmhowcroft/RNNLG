@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     with open(f"{args.output_prefix}.rlzns.metrics", 'w') as rlzn_metrics_file:
         with open(f"{args.output_prefix}.ref.metrics", 'w') as ref_metrics_file:
-            with open(f"{args.output_prefix}.mr.metrics", 'w') as mr_metrics_file:
+            with open(f"{args.output_prefix}.cued.metrics", 'w') as mr_metrics_file:
                 for mr in rlzns_by_mr:
                     if mr in refs_by_mr:
                         mr_metrics_file.write(mr + "\n")

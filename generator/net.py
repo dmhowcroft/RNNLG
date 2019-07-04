@@ -87,7 +87,7 @@ class Model(object):
         self.debug = parser.getboolean('learn', 'debug')
         if self.debug:
             print('loading settings from config file ...')
-        self.seed = parser.getint('learn', 'random_seed') % 2**32
+        self.seed = parser.getint('learn', 'random_seed') % 2 ** 32
         self.lr_divide = parser.getint('learn', 'lr_divide')
         self.lr = parser.getfloat('learn', 'lr')
         self.lr_decay = parser.getfloat('learn', 'lr_decay')
@@ -281,13 +281,12 @@ class Model(object):
                 # generate sentences
                 gens = self.model.gen(a, sv, s, v)
                 # for slot error rate scoring
-                felements = [self.reader.cardinality[x + self.reader.dfs[1]] \
+                felements = [self.reader.cardinality[x + self.reader.dfs[1]]
                              for x in sv]
 
                 # post processing and generate training data
                 wordids, bleus, errors, lengs = [], [], [], []
-                for i in range(len(gens)):
-                    penalty, gen = gens[i]
+                for penalty, gen in gens:
                     # replace word id with actual words
                     words = ' '.join([self.reader.vocab[x] for x in gen[1:-1]])
                     # score slot error rate
@@ -332,15 +331,14 @@ class Model(object):
                 train_obj += xObj
                 num_sent += 1
                 if self.debug and num_sent % 1 == 0:
-                    print('Finishing %8d sent in epoch %3d\r' % \
-                          (num_sent, epoch), end="")
+                    print(f'Finishing {num_sent:8d} sent in epoch {epoch:3d}\r', end="")
                     loader.data_reader.sys.stdout.flush()
             sec = (time.time() - tic) / 60.0
             if self.debug:
-                print(
-                    'Epoch %2d, Alpha %.4f, TRAIN Obj:%.4f, Expected BLEU:%.4f, Expected ERR:%.4f, Time:%.2f mins,' % (
-                    epoch, self.lr, train_obj / float(num_sent), train_bleu / float(num_sent),
-                    train_err / float(num_sent), sec), end="")
+                print(f'Epoch {epoch:2d}, Alpha {self.lr:.4f}, '
+                      f'TRAIN Obj:{train_obj / float(num_sent):.4f}, '
+                      f'Expected BLEU:{train_bleu / float(num_sent):.4f}, '
+                      f'Expected ERR:{train_err / float(num_sent):.4f}, Time:{sec:.2f} mins,', end="")
                 loader.data_reader.sys.stdout.flush()
 
             # validation phase
@@ -419,7 +417,6 @@ class Model(object):
 
             if lr_divide >= self.lr_divide:
                 self.lr *= self.lr_decay
-
 
     #################################################################
     ####################### Generation ##############################
@@ -592,6 +589,7 @@ class Model(object):
         # initialise data reader
         self.reader = loader.data_reader.DataReader(self.seed, self.domain, self.obj,
                                                     self.vocabfile, self.trainfile, self.validfile, self.testfile,
-                                                    self.percentage, self.verbose, lex_cutoff=4, detect_pairs_file=self.detectpairs)
+                                                    self.percentage, self.verbose, lex_cutoff=4,
+                                                    detect_pairs_file=self.detectpairs)
         # setting generation scorer
         self.gentscorer = GenerationScorer(self.detectpairs)
