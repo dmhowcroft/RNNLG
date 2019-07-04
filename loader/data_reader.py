@@ -192,15 +192,19 @@ class DataReader(object):
             self.lexicalise(self.delexicalise(sent, dact), dact)
 
     def _setup_data(self, trainfile, validfile, testfile):
-
         # load data from file
         train_group = True if self.obj == 'dt' else False
         self.data['train'] = self._load_data(trainfile, train_group)
-        self.data['valid'] = self._load_data(validfile, train_group)
+        if trainfile == validfile:
+            self.data['valid'] = self.data['train'][int(self.percentage * len(self.data['train'])):]
+            self.data['train'] = self.data['train'][:int(self.percentage * len(self.data['train']))]
+        else:
+            self.data['valid'] = self._load_data(validfile, train_group)
         self.data['test'] = self._load_data(testfile, False, True)
         # cut train/valid data by proportion
-        self.data['train'] = self.data['train'][:int(self.percentage * len(self.data['train']))]
-        self.data['valid'] = self.data['valid'][:int(self.percentage * len(self.data['valid']))]
+        if trainfile != validfile:
+            self.data['train'] = self.data['train'][:int(self.percentage * len(self.data['train']))]
+            self.data['valid'] = self.data['valid'][:int(self.percentage * len(self.data['valid']))]
 
     def _load_data(self, filename, group=True, multiref=False) -> List:
 
